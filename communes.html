@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html>
+    <title>Mobilité obligatoire</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.2/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    
+    <style>
+    html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    }
+
+    #map { 
+        width: 100%;
+        height: 100%;
+        float: right;
+    }
+    #rec {
+        padding-left: 0.5%;
+        padding-top : 5px;
+        display :none;
+        width: 19.5%;
+        height: 100%;
+        float: left;
+        font-size: 16px;
+      
+    }
+    #rec2 {
+        padding-left: 0.5%;
+        padding-top : 5px;
+        display :none;
+        width: 19.5%;
+        height: 100%;
+        float: left;
+        font-size: 16px;
+      
+    }
+    #sclose {
+        transition : 0.3s;
+       font-size: 14px;
+        font-weight: bold;
+        text-align: right;
+    }
+    #sclose:hover {
+        font-size: 16px;
+        cursor : pointer;
+    }
+
+    #sclose2 {
+        transition : 0.3s;
+       font-size: 14px;
+        font-weight: bold;
+        text-align: right;
+    }
+    #sclose2:hover {
+        font-size: 16px;
+        cursor : pointer;
+    }
+
+    .ui-widget {
+        font-size: 12px;
+    }
+
+    .clust2 {
+   
+    color: white;
+   
+    fill-opacity: 1;
+    
+    }
+    .clust {
+    transition : 0.5s;
+    color: white;
+   
+    fill-opacity: 1;
+    
+    }
+
+    .clust:hover {
+        color: rgba(255,100,100,1);
+    }
+    .svgtextc{
+  
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    filter: drop-shadow(1px 1px 1px rgb(0 0 0 / 0.8));
+    color : black;
+    }
+
+    .comm {
+    background-color:rgba(255, 255, 255, 0.4);            font-size: 10pt;
+            border: rgba(0, 0, 0, 0);
+            box-shadow: none;
+            font-size: 16px;
+            font-style: italic;
+            text-align: center;
+            font-family: serif;
+            font-weight: bold;
+            color: black;
+    }
+
+    .sec {
+    background-color:rgba(0, 0, 0, 0);
+            font-size: 14px;
+            border: rgba(0, 0, 0, 0);
+            box-shadow: none;
+            text-align: center;
+            font-family: serif;
+            font-weight: bold;
+            color: rgb(255,0,0);
+            filter: drop-shadow(2px 2px 1px rgb(0 0 0 / 0.8));
+    }
+
+    .legend {
+        padding: 6px 6px;
+        background-color: rgba(255,255,255,1);
+        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        border-radius: 5px;
+        border: solid 1px;
+        width: 200px;
+        transition : 0.3s;
+        opacity : 0;
+        font-size: 10pt;
+      
+    }
+
+    .legend h1 {
+        background-color: rgb(200,0,0);
+        color : white;
+        padding: 2px;
+        text-align: center;
+        font-size: 16pt;
+        font-weight: bold;
+    
+    }
+
+    .legec {
+        padding: 6px 6px;
+        background-color: rgba(255,255,255,1);
+        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        border-radius: 5px;
+        border: solid 1px;
+        width: 180px;
+        transition : 0.3s;
+        opacity : 0;
+        font-size: 8pt;
+      
+    }
+
+    .titre {
+        padding: 2px;
+        background-color: rgba(255,255,255,0.7);
+        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        border-radius: 5px;
+        border: solid 1px;
+        width: 300px;
+        opacity : 1;
+        font-size: 10pt;
+        text-align: center;
+      
+    }
+
+    .titre h1 {
+        color : black;
+        padding: 2px;
+        text-align: center;
+        font-size: 14pt;
+        font-weight: bold;
+    
+    }
+
+    .titre:hover {
+        background-color: rgba(255,255,255,1);
+        cursor: pointer;
+    }
+
+    .annuaire {
+        padding: 6px 6px;
+        background-color: rgba(255,255,255,1);
+        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        border-radius: 5px;
+        border: solid 1px;
+        width: 180px;
+        transition : 0.3s;
+        opacity : 1;
+        font-size: 10pt;
+       
+              
+    }
+
+    .annuaire:hover {
+       font-size: 11pt;
+       font-weight: bold;
+       cursor: pointer;
+    }
+
+    .annuaire2 {
+        padding: 6px 6px;
+        background-color: rgba(255,255,255,1);
+        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        border-radius: 5px;
+        border: solid 1px;
+        width: 180px;
+        transition : 0.3s;
+        opacity : 1;
+        font-size: 10pt;
+       
+              
+    }
+
+    .annuaire2:hover {
+       font-size: 11pt;
+       font-weight: bold;
+       cursor: pointer;
+    }
+
+
+    .circleSel {
+   transition: 0.3s;
+   color: rgba(0,0,0,0);
+}
+.circleSel:hover {
+    
+    color: red;
+
+}
+
+.rhover {
+    color: red;
+}
+
+.circlered {
+    transition: 0.3s;
+    color: red;
+
+}
+.secteurs {
+    transition : 0.3s;
+}
+
+.total {
+    font-size: 14px;
+    font-weight : bold;
+   
+}
+
+.bilan {
+    font-size: 12px;
+ 
+}
+    </style>
+   
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.2/leaflet.js"></script>
+    <script
+			  src="https://code.jquery.com/jquery-3.6.1.min.js"
+			  integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ="
+			  crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+     
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster.freezable@1.0.0/dist/leaflet.markercluster.freezable.js"></script>
+      
+
+    <script src="https://d3js.org/d3.v5.js"></script>
+
+    <script src="./data/communes.js"> // données communes </script>
+    <script src="./data/ecoles.js"> // données écoles </script>
+    
+   
+   
+
+    
+
+</head>
+
+<body>
+      <div id ="rec" class="ui-widget">
+        Taper le nom de l'école ou la commune. <span id="sclose">x</span>
+        <label for="tags"></label>
+        <input id="tags">
+       
+      </div>
+
+      <div id ="rec2" class="ui-widget">
+        Taper le nom de la commune. <span id="sclose2">x</span>
+        <label for="tags2"></label>
+        <input id="tags2">
+       
+      </div>
+    
+      <div id="map"></div>
+   
+<script>
+    const taille_icone = 36;
+    var secteurOn='';
+    var otherOpacity = true;
+    const sourd=0.4;
+
+    var tabec =[];
+    var tabuaiec=[];
+    var tabinseeec=[];
+    for (var i=0;i<ecoles.features.length;i++) {
+        tabec.push(ecoles.features[i].properties.nom.substr(4)+' ('+ecoles.features[i].properties.commune+')');
+        tabuaiec.push(ecoles.features[i].properties.uai);
+        tabinseeec.push(ecoles.features[i].properties.insee);
+    }
+
+    $( function() {
+        var availableTags = tabec;
+        $( "#tags" ).autocomplete({
+        source: availableTags,
+        select: function( event, ui ) {
+            var str = ui.item.value;
+        if(ecolesl.getLayer(tabuaiec[tabec.indexOf(str)])) {
+            var cible = ecolesl.getLayer(tabuaiec[tabec.indexOf(str)])._latlng;
+            var cible2 = secteursl.getLayer("s"+tabinseeec[tabec.indexOf(str)]);
+            cible2.fireEvent("click");
+            
+            map.fitBounds(secteursl.getBounds());
+            map.flyTo(cible,18,{duration : 3});
+            
+            setTimeout(function() {
+                $(".uai"+tabuaiec[tabec.indexOf(str)]).addClass("circlered");
+                $("#tags").val("");
+                ecolesl.getLayer(tabuaiec[tabec.indexOf(str)]).openPopup();
+                cible2.fireEvent("mouseover");
+            },3200);
+        
+        }
+        }
+        });
+        
+    } );
+    
+    var tabcom =[];
+    var tabinseecom=[];
+    
+    for (var i=0;i<communes.features.length;i++) {
+        tabcom.push(communes.features[i].properties.NOM);
+        tabinseecom.push(communes.features[i].properties.INSEE_COM);
+    }
+
+    $( function() {
+        var availableTags = tabcom;
+        $( "#tags2" ).autocomplete({
+        source: availableTags,
+        select: function( event, ui ) {
+            var str = ui.item.value;
+          
+        if(secteursl.getLayer('s'+tabinseecom[tabcom.indexOf(str)])) {
+            var cible = secteursl.getLayer('s'+tabinseecom[tabcom.indexOf(str)]);
+            
+            map.flyToBounds(cible.getBounds(),{duration:1, padding : [100,100]})
+            setTimeout(function(){ 
+                cible.fireEvent("click");
+                cible.fireEvent("mouseover");
+                $("#tags2").val("");
+            },1300)
+           
+                 
+        }
+        }
+        });
+        
+    } );
+    
+    // initialisation de la carte
+    let map = L.map("map", {attributionControl:false,
+    zoomSnap: 0.2
+    }).setView([43.5, 5], 10); // vue département 13
+
+   var OSM = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',opacity :0.7
+        }).addTo(map); // tuiles Open Street Map
+
+   
+    L.control.scale({imperial: false,maxWidth: 200,position: 'bottomright'}).addTo(map);
+
+    var secteurColor = d3.scaleLinear()
+            .domain([1,2,3,4,5,6])
+            .range(["rgb( 51, 52, 155)", "rgb( 119, 190, 253)","rgb( 129, 083, 155)","rgb( 42, 120, 247)","rgb( 0, 82, 86)","rgb(100,100,0)"])
+
+            .interpolate(d3.interpolateRgb.gamma(1));
+    
+    secteursl=L.geoJSON(communes,{onEachFeature : onSecteur,
+                         style : function (feature) {
+                             var classe = 'secteurs com'+feature.properties.INSEE_COM
+                            
+
+                             return {
+                                className : classe, color:'black',weight : 1,fillOpacity : 1,
+                                fillColor: `${secteurColor(parseInt(feature.properties.color_id))}`
+                             }
+                         }}).addTo(map);
+   
+
+    
+
+    ecolesl=L.geoJSON(ecoles,{onEachFeature : onEcole,pointToLayer: etabIcon
+                          });
+    
+    $("#sclose").on("click",function (){
+        $("#rec").css("display","none");$("#map").css("width","100%");map.invalidateSize();
+        $('.annuaire').css("display","initial")
+        $('.annuaire2').css("display","initial")  
+    })
+
+    $("#sclose2").on("click",function (){
+        $("#rec2").css("display","none");$("#map").css("width","100%");map.invalidateSize();
+        $('.annuaire').css("display","initial")
+        $('.annuaire2').css("display","initial")  
+        
+    })
+   
+    function onEcole(feature,layer) {
+
+        layer._leaflet_id = feature.properties.uai;
+
+        var lp=layer.bindPopup('<span class="pop" id="u'+feature.properties.uai+'"><b>'+feature.properties.nom+'</b><br> ('+feature.properties.commune+')<br>Circo. : '+feature.properties.circo+'</span>',
+        {interactive: true})
+        
+
+        layer.bindTooltip(feature.properties.nom, 
+                {interactive: true,sticky : false,
+                permanent: false, 
+                direction: "top", opacity: 1, className: 'ectooltip'
+                })
+        layer.on("mouseover",function(e){
+            if (otherOpacity) {
+                $(".secteurs").css("opacity",sourd);
+               
+                $(".com"+feature.properties.insee).css("opacity",1);
+                
+            }
+            secteursl.getLayer("s"+feature.properties.insee).fireEvent("mouseover");
+        });
+        
+        layer.on("mouseout",function(e){
+            if (otherOpacity) {
+                $(".secteurs").css("opacity","initial");
+                
+            }
+            secteursl.getLayer("s"+feature.properties.insee).fireEvent("mouseout");
+        });
+
+ }
+    
+    // secteurs
+    var spopup = ".leaflet-popup-content-wrapper"
+    map.on("popupopen",function (){
+        $(spopup).off("mouseover");
+        $(spopup).on("mouseover", function(e) {
+          
+            if(ecolesl.getLayer(e.target.id.substr(1,8)))
+            ecolesl.getLayer(e.target.id.substr(1,8)).fireEvent("mouseover");
+            $(".uai"+e.target.id.substr(1,8)).addClass("rhover");
+            
+        })
+        $(spopup).on("mouseout", function(e) {
+            if(ecolesl.getLayer(e.target.id.substr(1,8)))
+            ecolesl.getLayer(e.target.id.substr(1,8)).fireEvent("mouseout");
+            $(".uai"+e.target.id.substr(1,8)).removeClass("rhover");
+          
+        })
+    });
+  
+
+    $(".secteurs").css("fill-opacity","0.2");
+    $(".secteurs").css("transition","0.5s");
+    function onSecteur(feature,layer) {
+        layer._leaflet_id = 's'+feature.properties.INSEE_COM;
+       
+        //layer.bindPopup(collPopup(feature,layer));  // popup
+        const tooltipContent = "<div class='tsec s"+feature.properties.INSEE_COM+"'>" +"<b>"+feature.properties.NOM+"</b>"+"<br></div>";
+        layer.bindTooltip(tooltipContent, 
+                {interactive: false,sticky : true,
+                permanent: false, 
+                direction: "center", opacity: 1, className: 'comm'
+                });
+       
+        layer.on("mouseover",function(e){
+            if (otherOpacity) {
+                $(".secteurs").css("opacity",sourd);
+                
+                $(".com"+feature.properties.INSEE_COM).css("opacity",1);
+            }
+            
+            var htmlcont ="<h1>"+ feature.properties.NOM+"</h1>";
+            var total = parseInt(feature.properties.nprim)
+                +parseInt(feature.properties.nelem)+parseInt(feature.properties.nmat)
+                if (total >1) htmlcont+="<span class='total'>"+ total + " écoles</span>"
+                if (total <=1) htmlcont+="<span class='total'>"+ total + " école</span>"
+                
+                if (parseInt(feature.properties.nprim)>1){
+                    htmlcont+="<br><span class='bilan'>"+`${parseInt(feature.properties.nprim)} écoles primaires`
+                }
+                if (parseInt(feature.properties.nprim)==1){
+                    htmlcont+="<br><span class='bilan'>1 école primaire"
+                }
+                if (parseInt(feature.properties.nelem)>1){
+                    htmlcont+="<br><span class='bilan'>"+`${parseInt(feature.properties.nelem)} écoles élémentaires`
+                }
+                if (parseInt(feature.properties.nelem)==1){
+                    htmlcont+="<br><span class='bilan'>1 école élémentaire"
+                }
+                if (parseInt(feature.properties.nmat)>1){
+                    htmlcont+="<br><span class='bilan'>"+`${parseInt(feature.properties.nmat)} écoles maternelles`
+                }
+                if (parseInt(feature.properties.nmat)==1){
+                    htmlcont+="<br><span class='bilan'>1 école maternelle"
+                }
+          
+            document.getElementById("info").innerHTML = htmlcont;
+            $(".legend").css("opacity",1);
+        });
+
+        layer.on("mouseout",function(e){
+            if (otherOpacity) {
+                $(".secteurs").css("opacity","initial");
+                
+            }
+            $(".legend").css("opacity",0);
+           
+        });
+
+        layer.on("click",function(event){
+          $(".legec").css({transition:"0.5s",opacity:1});
+          otherOpacity=false;
+          L.DomEvent.stopPropagation(event);
+          $(".secteurs").css("opacity",sourd);
+          $(".secteurs").css("stroke-width",1);
+          $(".secteurs").css("stroke","black");
+          
+                $(".com"+feature.properties.INSEE_COM).css("opacity",1);
+                $(".com"+feature.properties.INSEE_COM).css("stroke-width",5);
+                $(".com"+feature.properties.INSEE_COM).css("stroke","red");
+            ecaffich.freezeAtZoom(2);
+          layerClassRemove("ecoles");
+          layerClassAdd("com"+feature.properties.INSEE_COM);
+          map.fitBounds(secteursl.getLayer(layer._leaflet_id).getBounds(),{padding : [100,100]});
+          setTimeout(function () {
+                            ecaffich.unfreeze();
+                            layer.fireEvent("mouseover");
+                        },1000);
+            
+           
+        });
+
+    }
+    
+    function serializeXmlNode(xmlNode) { //fonction pour traduire en XML
+        if (typeof window.XMLSerializer != "undefined") {
+            return (new window.XMLSerializer()).serializeToString(xmlNode);
+        } else if (typeof xmlNode.xml != "undefined") {
+            return xmlNode.xml;
+        }
+        return "";
+    }
+    
+    function poly(n,taille,rep,lettre, couleur,uai){  // fonction pour créer un svg en polygone régulier (svg+D3)
+        
+      
+        cstroke= 'black'; cstrokew ="1"
+
+        radius=taille_icone/2;
+        r=taille/2-4;
+        if (n<5) {classe='icon'}
+        else {classe='icon2'} // séparation collège et autres
+        svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        vis = d3.select(svg).attr("width", radius*2).attr("height", radius*2).
+                attr("class",classe); // classe css pour mise en valeur sur mouseover
+
+        if (rep == null) {rep='white'};    
+
+        let poly_svg = ""
+       
+               
+        for (let i=1;i<n+1;i++){
+            x=r*Math.cos(2*i*Math.PI/n)*Math.cos(Math.PI*(n-2)/n/2)  // polygone
+            -r*Math.sin(2*i*Math.PI/n)*Math.sin(Math.PI*(n-2)/n/2)
+            +radius;
+            y=r*Math.sin(2*i*Math.PI/n)*Math.cos(Math.PI*(n-2)/n/2)
+            +r*Math.cos(2*i*Math.PI/n)*Math.sin(Math.PI*(n-2)/n/2)
+            +radius;
+            poly_svg+=x+','+y+' ';
+        }
+        vis.append("polygon").attr("stroke",cstroke).attr("stroke-width",cstrokew)
+           .attr("filter","drop-shadow(2px 2px 1px rgb(0 0 0 / 0.8))")
+            .attr("fill",rep).attr("class","svgpoly")
+            .attr("points",poly_svg);
+        
+        if (lettre != null){
+        vis.append("text").text(lettre).attr("font-size",taille/2).attr("font-weight","bold")  //lettre optionelle
+            .attr("fill",couleur).attr("text-anchor","middle")
+            .attr("x",radius).attr("y",radius+Math.sqrt(taille))
+            .attr("font-family","Arial, Helvetica, sans-serif")
+            .attr("filter","drop-shadow(1px 1px 1px rgb(0 0 0 / 0.8))");   
+        }
+
+        vis.append("circle").attr("class","circleSel uai"+uai)
+        .attr("cx",radius).attr("cy",radius).attr("r",radius-1)
+        .attr("fill","rgba(0,0,0,0)").attr("stroke","currentColor").attr("stroke-width",2);
+
+        return serializeXmlNode(svg);
+    }
+
+    function etabIcon(feature, latlng) { // fonction de création d'icone
+        if (feature.properties.insee != null){
+        let size=30;
+        let lettre=null; let couleurl = null;
+        let opa = 1;
+        let uai=feature.properties.uai;
+        var classe='';
+        classe+="ecoles"
+
+        if (feature.properties.type == 'primaire') {cote=5;classe+=" mat elem";}  // type d'icone
+        if (feature.properties.type == 'élémentaire') {cote=4;classe+=" elem";}
+        if (feature.properties.type == 'maternelle') {cote=3;classe+=" mat";}
+      
+
+
+        if (feature.properties.rep == 'Hors EP') couleur='white';  // couelur de l'icone
+        if (feature.properties.rep =='REP') {couleur='yellow';classe+=' rep';}
+        if (feature.properties.rep =='REP+') {couleur='orange';classe+=' repp';}
+
+        classe+= ' com'+feature.properties.insee
+
+        let  etabIcon = L.divIcon({ // icone établissement
+            html: poly(cote , size , couleur, lettre, couleurl,uai),
+            iconSize:     [taille_icone,taille_icone],
+            tooltipAnchor:   [0,-10],
+            className : classe
+        });
+   
+        return L.marker(latlng, { icon: etabIcon, opacity : opa});
+        }
+    }
+        function tri_commune(a,b) {   // arrondissements
+            
+            if ((a.substr(11,1)==='e' && a.substr(0,4)==='Mars') || (a.substr(11,1)==='è'&& a.substr(0,4)==='Mars')) {
+                a=a.substr(0,10)+"0"+a.substr(10)
+            }
+
+            if ((b.substr(11,1)==='e' && b.substr(0,4)==='Mars') || (b.substr(11,1)==='è' && b.substr(0,4)==='Mars')) {
+                b=b.substr(0,10)+"0"+b.substr(10)
+            }
+        
+            if (a > b) return 1;
+            if (a < b ) return -1;
+        }
+    
+
+   
+     $(".commune").css({opacity:0});
+  
+                
+        
+        
+    let legec = L.control({position: "bottomright"});  // controles des couches
+    legec.onAdd = function() {
+    let div = L.DomUtil.create("div", "legec"); 
+    div.innerHTML = 
+    poly(3,24,null,null,null,true)+poly(3,24,"yellow",null,null,true)+ poly(3,24,"orange",null,null,true)+"<br>Maternelle Hors EP, REP, REP+<br>"+
+    poly(4,24,null,null,null,true)+poly(4,24,"yellow",null,null,true)+ poly(4,24,"orange",null,null,true)+"<br>Elémentaire Hors EP, REP, REP+<br>"+
+    poly(5,24,null,null,null,true)+poly(5,24,"yellow",null,null,true)+ poly(5,24,"orange",null,null,true)+"<br>Primaire Hors EP, REP, REP+<br>"+
+    `<span class='clust2'>${clusterIcon(3,1,1,1)}</span>`+"Grappe de n écoles <br>Varie en fonction du niveau de zoom";
+   
+
+        return div;
+    }
+   legec.addTo(map);  
+
+   let annuaire = L.control({position: "topleft"});  // controles des couches
+    annuaire.onAdd = function() {
+    let div = L.DomUtil.create("div", "annuaire"); 
+    div.innerHTML = "Chercher une école" 
+            return div;
+    }
+   annuaire.addTo(map);  
+   $(".annuaire").on("click",function () {
+        $("#map").css("width","80%");$("#rec").css("display","inline");map.invalidateSize();
+        $('.annuaire').css("display","none")
+        $('.annuaire2').css("display","none")
+    })
+
+    let annuaire2 = L.control({position: "topleft"});  // controles des couches
+    annuaire2.onAdd = function() {
+    let div = L.DomUtil.create("div", "annuaire2"); 
+    div.innerHTML = "Chercher une commune" 
+            return div;
+    }
+   annuaire2.addTo(map);  
+   $(".annuaire2").on("click",function () {
+        $("#map").css("width","80%");$("#rec2").css("display","inline");map.invalidateSize();
+        $('.annuaire2').css("display","none")
+        $('.annuaire').css("display","none")
+    })
+
+
+
+
+    let titre = L.control({position: "bottomleft"});  // controles des couches
+    titre.onAdd = function() {
+    let div = L.DomUtil.create("div", "titre"); 
+    div.innerHTML = 
+        "<h1>Carte des communes</h1>"
+      +
+      "<p>Survol des communes pour obtenir une synthèse</p>"+
+        "<p><b>Ecoles visibles en cliquant sur les commune</b></p>"
+
+        return div;
+    }
+    titre.addTo(map);
+    $(".titre").on("click",function () {
+        map.fitBounds(secteursl.getBounds()); 
+        $(".legec").css({transition:"0.5s",opacity:0});
+    })
+
+    let legend = L.control({position: "topright"});  // controles des couches
+    legend.onAdd = function() {
+    let div = L.DomUtil.create("div", "legend"); 
+    div.innerHTML = 
+        '<span id="info"></span>'
+        return div;
+    }
+    legend.addTo(map);
+
+    map.fitBounds(secteursl.getBounds()); 
+
+    ecaffich = L.markerClusterGroup({disableClusteringAtZoom: 18,maxClusterRadius : 40, animate: true,showCoverageOnHover:false,
+             iconCreateFunction: function(cluster) { // fonctio de création des clusters
+        
+           
+        n=cluster.getChildCount();
+        r=Math.sqrt(n)*2+10
+        size=3*r
+        fsize=r
+        center=r+5
+        center_text=2.5*Math.pow(r,0.85);
+        let groups=false;
+
+        nature1=cluster.getAllChildMarkers()[0].feature.properties.type;
+        nature2=cluster.getAllChildMarkers()[1].feature.properties.type;
+        rep1=cluster.getAllChildMarkers()[0].feature.properties.rep;
+        rep2=cluster.getAllChildMarkers()[1].feature.properties.rep;
+        
+       
+  
+        
+      
+        
+
+            long=cluster.getAllChildMarkers().length;
+            var classClust="";
+                nrep=0;rep=0;repp=0;other=0;
+                for (let i=0;i<long;i++) {
+                    
+                    var words = cluster.getAllChildMarkers()[i].options.icon.options.className.split(' ');
+                    for (var k=0;k<words.length;k++) {
+                        if (!classClust.includes(words[k])) {classClust+=' '+words[k]}
+                    }
+                    switch(cluster.getAllChildMarkers()[i].feature.properties.rep) {
+                        
+                        case 'REP':rep++;break;
+                        case 'REP+':repp++;break;
+                        default:nrep++;break
+                    }
+                    
+                    
+                }
+               
+                return L.divIcon({ 
+                html: clusterIcon(n,nrep,rep,repp), 
+                className: 'clust'+classClust,
+                iconSize: size
+                });
+
+          
+       
+
+        }
+
+    });
+
+    function clusterIcon(n,a,b,c) {  // fonction de tracer du cluster, avec le beignet
+    r=Math.sqrt(n)*2+10
+    size=3*r
+    fsize=r
+    center=size/2
+    
+    
+    var data = {a, b, c};
+    margin = 2
+    var radius = size / 2 - margin
+    
+    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    vis = d3.select(svg).attr("width", size).attr("height", size);
+    vis.attr("class","svgcircle")
+     .attr("filter","drop-shadow(3px 3px 2px rgb(0 0 0 / 0.6))");
+       
+       
+        var color = d3.scaleOrdinal()
+      .domain(data)
+      .range(["white", "yellow", "orange"])
+
+    
+    // Compute the position of each group on the pie:
+    var pie = d3.pie()
+      .value(function(d) {return d.value; })
+    var data_ready = pie(d3.entries(data))
+
+    vis
+      .selectAll('whatever')
+      .data(data_ready)
+      .enter()
+      .append('path')
+      .attr('d', d3.arc()
+        .innerRadius(radius/2)
+        .outerRadius(radius)
+      ).attr("transform", "translate(" + size / 2 + "," + size / 2 + ")")
+      .attr('fill', function(d){ return(color(d.data.key)) })
+      .attr("stroke", "black")
+      .style("stroke-width", "0px")
+      .style("opacity", 1);
+
+      vis.append('circle')
+      .attr('cx',center).attr('cy',center).attr('r',radius)
+      .attr('fill','rgba(0,0,0,0)')
+      .attr("stroke", "black")
+      .style("stroke-width", "2px")
+
+      vis.append('circle')
+      .attr('cx',center).attr('cy',center).attr('r',radius/2.2)
+      .attr('fill','currentColor')
+      .style("stroke-width", "0px")
+
+      
+     vis.append("text").text(n).attr("class","svgtextc")
+        .attr("x",center).attr("y",center+size/8)
+        .attr("font-size",fsize).attr("text-anchor","middle");
+
+    
+
+    return serializeXmlNode(svg);
+}
+
+map.addLayer(ecaffich);
+   
+    ecaffich.on('clustermouseover', function(e) {
+        
+            var long=e.layer.getAllChildMarkers().length;
+            for (let i=0;i<long;i++) {
+                        if(e.layer.getAllChildMarkers()[i].feature.properties.insee) {
+                        
+                            secteursl.getLayer("s"+e.layer.getAllChildMarkers()[i].feature.properties.insee).fireEvent("mouseover"); 
+                           
+                            break;
+                        }
+                                        
+                    }
+              
+    });
+
+    map.on("click", function() {
+
+        layerClassRemove("ecoles");
+        otherOpacity =true;
+        $(".secteurs").css("opacity","initial");
+        $(".secteurs").css("stroke-width",1);
+        $(".secteurs").css("stroke","black");
+        $(".legec").css({transition:"0.5s",opacity:0});
+
+
+
+    })
+   
+    function layerClassRemove(className) {
+        
+        ecolesl.eachLayer(function (layer) {
+            var words = layer.options.icon.options.className.split(' ');
+            var cla = className.split(' ');
+            var test= true;
+            
+                for (var k=0;k<cla.length;k++){
+                    if(!words.includes(cla[k])) {
+                        test=false;
+                    }
+                }
+                if(test) {ecaffich.removeLayer(layer)};
+        });
+    }
+
+    function layerClassAdd(className) {
+        
+        ecolesl.eachLayer(function (layer) {
+            var words = layer.options.icon.options.className.split(' ')
+            var cla = className.split(' ');
+            var test= true;
+            
+                for (var k=0;k<cla.length;k++){
+                    if(!words.includes(cla[k])) {
+                        test=false;
+                    }
+                }
+                if(test && !ecaffich._mapToAdd._layers[layer._leaflet_id]) {ecaffich.addLayer(layer)};
+        });
+    }
+</script>
+</body>
+</html>
+    
+    
+    
+    
+   
+    
+    
+
+    
+</head>
