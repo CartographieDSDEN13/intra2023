@@ -135,7 +135,7 @@
         box-shadow: 0 0 15px rgba(0,0,0,0.5);
         border-radius: 5px;
         border: solid 1px;
-        width: 200px;
+        width: 220px;
         transition : 0.3s;
         opacity : 0;
         font-size: 10pt;
@@ -143,7 +143,7 @@
     }
 
     .legend h1 {
-        background-color: rgb(200,0,0);
+        background-color: rgb(0,0,200);
         color : white;
         padding: 2px;
         text-align: center;
@@ -172,7 +172,7 @@
         box-shadow: 0 0 15px rgba(0,0,0,0.5);
         border-radius: 5px;
         border: solid 1px;
-        width: 300px;
+        width: 350px;
         opacity : 1;
         font-size: 10pt;
         text-align: center;
@@ -188,20 +188,19 @@
     
     }
 
-   
-     .titre:hover {
+    .titre:hover {
         background-color: rgba(200,200,200,1);
         cursor: pointer;
        
     }
-    
+
     .annuaire {
         padding: 6px 6px;
         background-color: rgba(255,255,255,0.6);
         box-shadow: 0 0 15px rgba(0,0,0,0.5);
         border-radius: 5px;
         border: solid 1px;
-        width: 180px;
+        width: 210px;
         transition : 0.3s;
         opacity : 1;
         font-size: 10pt;
@@ -222,7 +221,7 @@
         box-shadow: 0 0 15px rgba(0,0,0,0.5);
         border-radius: 5px;
         border: solid 1px;
-        width: 180px;
+        width: 210px;
         transition : 0.3s;
         opacity : 1;
         font-size: 10pt;
@@ -308,24 +307,20 @@
 
     <script src="./data/communes.js"> // données communes </script>
     <script src="./data/ecoles.js"> // données écoles </script>
+    <script src="./data/circos.js"> // données écoles </script>
     
-   
-   
-
-    
-
 </head>
 
 <body>
       <div id ="rec" class="ui-widget">
-        Taper le nom de l'école ou la commune. <span id="sclose">+</span>
+        Taper le nom de l'école ou de la commune. <span id="sclose">+</span>
         <label for="tags"></label>
         <input id="tags">
        
       </div>
 
       <div id ="rec2" class="ui-widget">
-        Taper le nom de la commune. <span id="sclose2">+</span>
+        Taper le nom de la circonscription. <span id="sclose2">+</span>
         <label for="tags2"></label>
         <input id="tags2">
        
@@ -341,11 +336,11 @@
 
     var tabec =[];
     var tabuaiec=[];
-    var tabinseeec=[];
+    var tabcircoec=[];
     for (var i=0;i<ecoles.features.length;i++) {
         tabec.push(ecoles.features[i].properties.nom.substr(4)+' ('+ecoles.features[i].properties.commune+')');
         tabuaiec.push(ecoles.features[i].properties.uai);
-        tabinseeec.push(ecoles.features[i].properties.insee);
+        tabcircoec.push(ecoles.features[i].properties.circo_uai);
     }
 
     $( function() {
@@ -356,7 +351,7 @@
             var str = ui.item.value;
         if(ecolesl.getLayer(tabuaiec[tabec.indexOf(str)])) {
             var cible = ecolesl.getLayer(tabuaiec[tabec.indexOf(str)])._latlng;
-            var cible2 = secteursl.getLayer("s"+tabinseeec[tabec.indexOf(str)]);
+            var cible2 = secteursl.getLayer("s"+tabcircoec[tabec.indexOf(str)]);
             cible2.fireEvent("click");
             
             map.fitBounds(secteursl.getBounds());
@@ -375,23 +370,23 @@
         
     } );
     
-    var tabcom =[];
-    var tabinseecom=[];
+    var tabcirco =[];
+    var tabuaicirco=[];
     
-    for (var i=0;i<communes.features.length;i++) {
-        tabcom.push(communes.features[i].properties.NOM);
-        tabinseecom.push(communes.features[i].properties.INSEE_COM);
+    for (var i=0;i<circos.features.length;i++) {
+        tabcirco.push(circos.features[i].properties.circo);
+        tabuaicirco.push(circos.features[i].properties.circo_uai);
     }
 
     $( function() {
-        var availableTags = tabcom;
+        var availableTags = tabcirco;
         $( "#tags2" ).autocomplete({
         source: availableTags,
         select: function( event, ui ) {
             var str = ui.item.value;
-          
-        if(secteursl.getLayer('s'+tabinseecom[tabcom.indexOf(str)])) {
-            var cible = secteursl.getLayer('s'+tabinseecom[tabcom.indexOf(str)]);
+          console.log(tabcirco.indexOf(str))
+        if(secteursl.getLayer('s'+tabuaicirco[tabcirco.indexOf(str)])) {
+            var cible = secteursl.getLayer('s'+tabuaicirco[tabcirco.indexOf(str)]);
             
             map.flyToBounds(cible.getBounds(),{duration:1, padding : [100,100]})
             setTimeout(function(){ 
@@ -422,13 +417,29 @@
 
     var secteurColor = d3.scaleLinear()
             .domain([1,2,3,4,5,6])
-            .range(["rgb( 51, 52, 155)", "rgb( 19, 140, 03)","rgb( 179, 083, 155)","rgb( 42, 120, 247)","rgb( 0, 82, 86)","rgb(100,100,0)"])
+            .range(["rgb( 105, 107, 73)", "rgb( 205, 118, 128)","rgb( 255, 170, 101)","rgb( 197, 20, 1)","green"])
 
             .interpolate(d3.interpolateRgb.gamma(1));
     
-    secteursl=L.geoJSON(communes,{onEachFeature : onSecteur,
+    communesl=L.geoJSON(communes,{onEachFeature : onCommune,
                          style : function (feature) {
-                             var classe = 'secteurs com'+feature.properties.INSEE_COM
+                             var classe = 'commune c'+feature.properties.INSEE_COM;
+                             return {
+                                className : classe, color :'black',weight : 2,dashArray: '5,10',fillOpacity : 0.1,fillColor:"black"
+                             }
+                         }}).addTo(map);
+    function onCommune(feature,layer) {
+        
+        layer._leaflet_id = feature.properties.INSEE_COM;
+        
+      
+        var classe = 'c'+feature.properties.secteur;
+
+    };
+    
+    secteursl=L.geoJSON(circos,{onEachFeature : onSecteur,
+                         style : function (feature) {
+                             var classe = 'secteurs circo'+feature.properties.circo_uai
                             
 
                              return {
@@ -480,18 +491,19 @@
             if (otherOpacity) {
                 $(".secteurs").css("opacity",sourd);
                
-                $(".com"+feature.properties.insee).css("opacity",1);
+                $(".circo"+feature.properties.circo_uai).css("opacity",1);
                 
             }
-            secteursl.getLayer("s"+feature.properties.insee).fireEvent("mouseover");
+            secteursl.getLayer("s"+feature.properties.circo_uai).fireEvent("mouseover");
         });
         
         layer.on("mouseout",function(e){
             if (otherOpacity) {
                 $(".secteurs").css("opacity","initial");
+              
                 
             }
-            secteursl.getLayer("s"+feature.properties.insee).fireEvent("mouseout");
+            secteursl.getLayer("s"+feature.properties.circo_uai).fireEvent("mouseout");
         });
 
  }
@@ -519,10 +531,10 @@
     $(".secteurs").css("fill-opacity","0.2");
     $(".secteurs").css("transition","0.5s");
     function onSecteur(feature,layer) {
-        layer._leaflet_id = 's'+feature.properties.INSEE_COM;
+        layer._leaflet_id = 's'+feature.properties.circo_uai;
        
         //layer.bindPopup(collPopup(feature,layer));  // popup
-        const tooltipContent = "<div class='tsec s"+feature.properties.INSEE_COM+"'>" +"<b>"+feature.properties.NOM+"</b>"+"<br></div>";
+        const tooltipContent = "<div class='tsec s"+feature.properties.circo_uai+"'>" +"<b>"+feature.properties.circo+"</b>"+"<br></div>";
         layer.bindTooltip(tooltipContent, 
                 {interactive: false,sticky : true,
                 permanent: false, 
@@ -533,11 +545,11 @@
             if (otherOpacity) {
                 $(".secteurs").css("opacity",sourd);
                 
-                $(".com"+feature.properties.INSEE_COM).css("opacity",1);
-                $(".com"+feature.properties.INSEE_COM).css("stroke-width",3);
+                $(".circo"+feature.properties.circo_uai).css("opacity",1);
+                $(".circo"+feature.properties.circo_uai).css("stroke-width",3);
             }
             
-            var htmlcont ="<h1>"+ feature.properties.NOM+"</h1>";
+            var htmlcont ="<h1>"+ feature.properties.circo+"</h1>";
             var total = parseInt(feature.properties.nprim)
                 +parseInt(feature.properties.nelem)+parseInt(feature.properties.nmat)
                 if (total >1) htmlcont+="<span class='total'>"+ total + " écoles</span>"
@@ -561,7 +573,32 @@
                 if (parseInt(feature.properties.nmat)==1){
                     htmlcont+="<br><span class='bilan'>1 école maternelle"
                 }
-          
+            
+                var commaffich =[]
+            var inseeaffich= []
+            for (var i=0;i<ecoles.features.length;i++) {
+                if (ecoles.features[i].properties.circo_uai == feature.properties.circo_uai) {
+                    
+                    if (!commaffich.includes(ecoles.features[i].properties.commune)){
+                       
+                        commaffich.push(ecoles.features[i].properties.commune);
+                        inseeaffich.push(ecoles.features[i].properties.insee);
+                    }
+                   
+                    
+                }
+            }
+
+            commaffich=commaffich.sort(tri_commune);
+            htmlcont+="<br>"
+            for (var j=0;j<commaffich.length;j++) {
+                htmlcont+="<br><i>"+commaffich[j]+"</i>"
+                if (commaffich[j].substr(0,5)=='Marse') htmlcont+=' (partiel)'
+                if (commaffich[j].substr(0,3)=='Aix') htmlcont+=' (partiel)'
+            }
+        
+            
+            
             document.getElementById("info").innerHTML = htmlcont;
             $(".legend").css("opacity",1);
         });
@@ -583,13 +620,36 @@
           $(".secteurs").css("opacity",sourd);
           $(".secteurs").css("stroke-width",1);
           $(".secteurs").css("stroke","black");
+
+          $(".commune").css("opacity",0)
+            var commaffich =[]
+            var inseeaffich= []
+            for (var i=0;i<ecoles.features.length;i++) {
+                if (ecoles.features[i].properties.circo_uai == feature.properties.circo_uai) {
+                    
+                    if (!commaffich.includes(ecoles.features[i].properties.commune)){
+                       
+                        commaffich.push(ecoles.features[i].properties.commune);
+                        inseeaffich.push(ecoles.features[i].properties.insee);
+                    }
+                   
+                    
+                }
+            }
+           
+           
           
-                $(".com"+feature.properties.INSEE_COM).css("opacity",1);
-                $(".com"+feature.properties.INSEE_COM).css("stroke-width",5);
-                $(".com"+feature.properties.INSEE_COM).css("stroke","red");
+            for (var o=0;o<inseeaffich.length;o++) {
+                $(".c"+inseeaffich[o]).css("opacity",1)
+            }
+            
+          
+                $(".circo"+feature.properties.circo_uai).css("opacity",1);
+                $(".circo"+feature.properties.circo_uai).css("stroke-width",5);
+                $(".circo"+feature.properties.circo_uai).css("stroke","blue");
             ecaffich.freezeAtZoom(2);
           layerClassRemove("ecoles");
-          layerClassAdd("com"+feature.properties.INSEE_COM);
+          layerClassAdd("circo"+feature.properties.circo_uai);
           map.fitBounds(secteursl.getLayer(layer._leaflet_id).getBounds(),{padding : [100,100]});
           setTimeout(function () {
                             ecaffich.unfreeze();
@@ -658,7 +718,7 @@
     }
 
     function etabIcon(feature, latlng) { // fonction de création d'icone
-        if (feature.properties.insee != null){
+        if (feature.properties.circo_uai!= null){
         let size=30;
         let lettre=null; let couleurl = null;
         let opa = 1;
@@ -676,7 +736,7 @@
         if (feature.properties.rep =='REP') {couleur='yellow';classe+=' rep';}
         if (feature.properties.rep =='REP+') {couleur='orange';classe+=' repp';}
 
-        classe+= ' com'+feature.properties.insee
+        classe+= ' circo'+feature.properties.circo_uai
 
         let  etabIcon = L.divIcon({ // icone établissement
             html: poly(cote , size , couleur, lettre, couleurl,uai),
@@ -706,10 +766,9 @@
    
      $(".commune").css({opacity:0});
   
-                
+                      
         
-        
-   ;  
+  
 
    let annuaire = L.control({position: "topleft"});  // controles des couches
     annuaire.onAdd = function() {
@@ -727,7 +786,7 @@
     let annuaire2 = L.control({position: "topleft"});  // controles des couches
     annuaire2.onAdd = function() {
     let div = L.DomUtil.create("div", "annuaire2"); 
-    div.innerHTML = "Chercher une commune" 
+    div.innerHTML = "Chercher une circonscription" 
             return div;
     }
    annuaire2.addTo(map);  
@@ -744,10 +803,10 @@
     titre.onAdd = function() {
     let div = L.DomUtil.create("div", "titre"); 
     div.innerHTML = 
-        "<h1>Carte des communes</h1>"
+        "<h1>Carte des circonscriptions</h1>"
       +
-      "<p>Survol des communes pour obtenir une synthèse</p>"+
-        "<p class='einfo'>Ecoles visibles en cliquant sur les communes</p>"
+      "<p>Survol des circonscriptions pour obtenir une synthèse</p>"+
+        "<p class='einfo'>Ecoles visibles en cliquant sur les circonscriptions</p>"
 
         return div;
     }
@@ -755,6 +814,8 @@
     $(".titre").on("click",function () {
         map.fitBounds(secteursl.getBounds()); 
         $(".legec").css({transition:"0.5s",opacity:0});
+        $(".commune").css({opacity:0});
+  
     })
 
     let legend = L.control({position: "topright"});  // controles des couches
@@ -778,7 +839,7 @@
 
         return div;
     }
-   legec.addTo(map)
+   legec.addTo(map);  
 
     map.fitBounds(secteursl.getBounds()); 
 
@@ -905,9 +966,9 @@ map.addLayer(ecaffich);
         
             var long=e.layer.getAllChildMarkers().length;
             for (let i=0;i<long;i++) {
-                        if(e.layer.getAllChildMarkers()[i].feature.properties.insee) {
+                        if(e.layer.getAllChildMarkers()[i].feature.properties.circo_uai) {
                         
-                            secteursl.getLayer("s"+e.layer.getAllChildMarkers()[i].feature.properties.insee).fireEvent("mouseover"); 
+                            secteursl.getLayer("s"+e.layer.getAllChildMarkers()[i].feature.properties.circo_uai).fireEvent("mouseover"); 
                            
                             break;
                         }
@@ -924,6 +985,8 @@ map.addLayer(ecaffich);
         $(".secteurs").css("stroke-width",1);
         $(".secteurs").css("stroke","black");
         $(".legec").css({transition:"0.5s",opacity:0});
+        $(".commune").css({opacity:0});
+  
 
 
 
