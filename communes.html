@@ -41,25 +41,37 @@
         font-size: 16px;
       
     }
+
     #sclose {
         transition : 0.3s;
-       font-size: 14px;
+        padding-right : 5px;
+        transform: rotate(45deg);
+    float: right;
+    vertical-align: middle;
+       font-size: 22px;
+      
         font-weight: bold;
-        text-align: right;
+        
     }
     #sclose:hover {
-        font-size: 16px;
+        font-size: 28px;
         cursor : pointer;
     }
 
     #sclose2 {
         transition : 0.3s;
-       font-size: 14px;
+        padding-right : 5px;
+        transform: rotate(45deg);
+    float: right;
+   
+    vertical-align: middle;
+       font-size: 22px;
         font-weight: bold;
-        text-align: right;
+        
     }
     #sclose2:hover {
-        font-size: 16px;
+        
+        font-size: 28px;
         cursor : pointer;
     }
 
@@ -119,7 +131,7 @@
 
     .legend {
         padding: 6px 6px;
-        background-color: rgba(255,255,255,1);
+        background-color: rgba(255,255,255,0.8);
         box-shadow: 0 0 15px rgba(0,0,0,0.5);
         border-radius: 5px;
         border: solid 1px;
@@ -135,14 +147,14 @@
         color : white;
         padding: 2px;
         text-align: center;
-        font-size: 16pt;
+        font-size: 14pt;
         font-weight: bold;
     
     }
 
     .legec {
         padding: 6px 6px;
-        background-color: rgba(255,255,255,1);
+        background-color: rgba(255,255,255,0.8);
         box-shadow: 0 0 15px rgba(0,0,0,0.5);
         border-radius: 5px;
         border: solid 1px;
@@ -154,8 +166,9 @@
     }
 
     .titre {
+        transition : 0.3s;
         padding: 2px;
-        background-color: rgba(255,255,255,0.7);
+        background-color: rgba(255,255,255,0.8);
         box-shadow: 0 0 15px rgba(0,0,0,0.5);
         border-radius: 5px;
         border: solid 1px;
@@ -178,11 +191,13 @@
     .titre:hover {
         background-color: rgba(255,255,255,1);
         cursor: pointer;
+        font-size: 12pt;
+        width: 350px;
     }
 
     .annuaire {
         padding: 6px 6px;
-        background-color: rgba(255,255,255,1);
+        background-color: rgba(255,255,255,0.6);
         box-shadow: 0 0 15px rgba(0,0,0,0.5);
         border-radius: 5px;
         border: solid 1px;
@@ -195,6 +210,7 @@
     }
 
     .annuaire:hover {
+        background-color: white;
        font-size: 11pt;
        font-weight: bold;
        cursor: pointer;
@@ -202,7 +218,7 @@
 
     .annuaire2 {
         padding: 6px 6px;
-        background-color: rgba(255,255,255,1);
+        background-color: rgba(255,255,255,0.6);
         box-shadow: 0 0 15px rgba(0,0,0,0.5);
         border-radius: 5px;
         border: solid 1px;
@@ -215,6 +231,7 @@
     }
 
     .annuaire2:hover {
+        background-color: white;
        font-size: 11pt;
        font-weight: bold;
        cursor: pointer;
@@ -254,6 +271,24 @@
     font-size: 12px;
  
 }
+
+.pop {
+    line-height : 5px;
+}
+.nomec {
+    font-size: 14px;
+    font-weight: bold;
+    color: rgb(100,0,0);
+}
+.nomcirco {
+    color: rgb(0,0,150);
+}
+.einfo {
+    
+    font-weight: bold;
+    color : red;
+    
+}
     </style>
    
 
@@ -283,14 +318,14 @@
 
 <body>
       <div id ="rec" class="ui-widget">
-        Taper le nom de l'école ou la commune. <span id="sclose">x</span>
+        Taper le nom de l'école ou la commune. <span id="sclose">+</span>
         <label for="tags"></label>
         <input id="tags">
        
       </div>
 
       <div id ="rec2" class="ui-widget">
-        Taper le nom de la commune. <span id="sclose2">x</span>
+        Taper le nom de la commune. <span id="sclose2">+</span>
         <label for="tags2"></label>
         <input id="tags2">
        
@@ -379,7 +414,7 @@
 
    var OSM = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',opacity :0.7
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',opacity :0.6
         }).addTo(map); // tuiles Open Street Map
 
    
@@ -387,7 +422,7 @@
 
     var secteurColor = d3.scaleLinear()
             .domain([1,2,3,4,5,6])
-            .range(["rgb( 51, 52, 155)", "rgb( 119, 190, 253)","rgb( 129, 083, 155)","rgb( 42, 120, 247)","rgb( 0, 82, 86)","rgb(100,100,0)"])
+            .range(["rgb( 51, 52, 155)", "rgb( 19, 140, 03)","rgb( 179, 083, 155)","rgb( 42, 120, 247)","rgb( 0, 82, 86)","rgb(100,100,0)"])
 
             .interpolate(d3.interpolateRgb.gamma(1));
     
@@ -424,9 +459,16 @@
     function onEcole(feature,layer) {
 
         layer._leaflet_id = feature.properties.uai;
-
-        var lp=layer.bindPopup('<span class="pop" id="u'+feature.properties.uai+'"><b>'+feature.properties.nom+'</b><br> ('+feature.properties.commune+')<br>Circo. : '+feature.properties.circo+'</span>',
-        {interactive: true})
+        var commu=feature.properties.commune;
+        if (feature.properties.commune.substr(0,5)=='Marse') commu = 'Marseille'
+        var content ='<span class="pop" id="u'+feature.properties.uai+'">'+
+            '<p class="nomec">'+feature.properties.nom+'</p>'
+            +'<p class ="adresseec">'+feature.properties.adresse+' '+feature.properties.code_postal+' <b><i>'+commu+'</b></i></p>'
+            +'<p class="nomcirco"> Circonscription : <b>'+feature.properties.circo+'</b></p>'
+            +'<p class ="RNE">Code établissement : <b>'+feature.properties.uai+'</b></p></span>'
+        
+        var lp=layer.bindPopup(content,
+        {interactive: true,maxWidth: 700})
         
 
         layer.bindTooltip(feature.properties.nom, 
@@ -715,7 +757,7 @@
         "<h1>Carte des communes</h1>"
       +
       "<p>Survol des communes pour obtenir une synthèse</p>"+
-        "<p><b>Ecoles visibles en cliquant sur les commune</b></p>"
+        "<p class='einfo'>Ecoles visibles en cliquant sur les communes</p>"
 
         return div;
     }
