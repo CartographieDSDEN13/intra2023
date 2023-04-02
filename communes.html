@@ -467,8 +467,8 @@
             +'<p class="nomcirco"> Circonscription : <b>'+feature.properties.circo+'</b></p>'
             +'<p class ="RNE">Code établissement : <b>'+feature.properties.uai+'</b></p></span>'
         
-        var lp=layer.bindPopup(content,
-        {interactive: true,maxWidth: 700})
+            var lp=layer.bindPopup(content,
+        {className :"uaipop"+feature.properties.uai,interactive: true,maxWidth: 700})
         
 
         layer.bindTooltip(feature.properties.nom, 
@@ -497,20 +497,20 @@
  }
     
     // secteurs
-    var spopup = ".leaflet-popup-content-wrapper"
+    var spopup = ".leaflet-popup"
     map.on("popupopen",function (){
         $(spopup).off("mouseover");
         $(spopup).on("mouseover", function(e) {
-          
-            if(ecolesl.getLayer(e.target.id.substr(1,8)))
-            ecolesl.getLayer(e.target.id.substr(1,8)).fireEvent("mouseover");
-            $(".uai"+e.target.id.substr(1,8)).addClass("rhover");
+         
+            if(ecolesl.getLayer(e.delegateTarget.classList[1].substr(6,8)))
+            ecolesl.getLayer(e.delegateTarget.classList[1].substr(6,8)).fireEvent("mouseover");
+            $(".uai"+e.delegateTarget.classList[1].substr(6,8)).addClass("rhover");
             
         })
         $(spopup).on("mouseout", function(e) {
-            if(ecolesl.getLayer(e.target.id.substr(1,8)))
-            ecolesl.getLayer(e.target.id.substr(1,8)).fireEvent("mouseout");
-            $(".uai"+e.target.id.substr(1,8)).removeClass("rhover");
+            if(ecolesl.getLayer(e.delegateTarget.classList[1].substr(6,8)))
+            ecolesl.getLayer(e.delegateTarget.classList[1].substr(6,8)).fireEvent("mouseout");
+            $(".uai"+e.delegateTarget.classList[1].substr(6,8)).removeClass("rhover");
           
         })
     });
