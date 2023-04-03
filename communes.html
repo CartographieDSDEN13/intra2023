@@ -289,6 +289,10 @@
     color : red;
     
 }
+.impo {
+    font-weight: bold;
+    color : rgb(200,0,0);
+}
     </style>
    
 
@@ -422,18 +426,28 @@
 
     var secteurColor = d3.scaleLinear()
             .domain([1,2,3,4,5,6])
-            .range(["rgb( 51, 52, 155)", "rgb( 19, 140, 03)","rgb( 179, 083, 155)","rgb( 42, 120, 247)","rgb( 0, 82, 86)","rgb(100,100,0)"])
+            .range(["rgb( 51, 52, 155)", "rgb( 19, 140, 03)","rgb( 179, 083, 155)","rgb( 42, 120, 247)","rgb( 0, 102, 106)","rgb(100,100,0)"])
 
             .interpolate(d3.interpolateRgb.gamma(1));
     
     secteursl=L.geoJSON(communes,{onEachFeature : onSecteur,
                          style : function (feature) {
                              var classe = 'secteurs com'+feature.properties.INSEE_COM
-                            
-
+                             var total = parseInt(feature.properties.nprim)                
+                             +parseInt(feature.properties.nelem)+parseInt(feature.properties.nmat)
+                             var fcolor 
+                             var fopa
+                            if (total > 1) {
+                                fcolor = secteurColor(parseInt(feature.properties.color_id));
+                                fopa = 0.2;
+                            }
+                            else  {
+                                fcolor ='black';
+                                fopa = 0.4
+                            }
                              return {
-                                className : classe, color:'black',weight : 1,fillOpacity : 1,
-                                fillColor: `${secteurColor(parseInt(feature.properties.color_id))}`
+                                className : classe, color:'black',weight : 1,fillOpacity : fopa,
+                                fillColor: fcolor
                              }
                          }}).addTo(map);
    
@@ -516,7 +530,7 @@
     });
   
 
-    $(".secteurs").css("fill-opacity","0.2");
+   
     $(".secteurs").css("transition","0.5s");
     function onSecteur(feature,layer) {
         layer._leaflet_id = 's'+feature.properties.INSEE_COM;
@@ -562,6 +576,7 @@
                     htmlcont+="<br><span class='bilan'>1 école maternelle"
                 }
           
+                if (total <2) htmlcont+="<span class='impo'><br> Voeu commune IMPOSSIBLE</span>"
             document.getElementById("info").innerHTML = htmlcont;
             $(".legend").css("opacity",1);
         });
@@ -746,7 +761,9 @@
     div.innerHTML = 
         "<h1>Carte des communes</h1>"
       +
-      "<p>Survol des communes pour obtenir une synthèse</p>"+
+      "<p>Survol des communes pour obtenir une synthèse.\
+        <br>Communes en gris : voeu commune impossible</p>"+
+
         "<p class='einfo'>Ecoles visibles en cliquant sur les communes</p>"
 
         return div;
