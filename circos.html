@@ -990,7 +990,25 @@ map.addLayer(ecaffich);
 
 
     })
-   
+    
+    var zoomflag=true;
+    map.on("zoomend", function() {
+    
+        var zoom = map.getZoom();
+        if (zoom>14.5 & zoomflag ) {
+            ecaffich.disableClustering();
+            zoomflag=false;
+         
+        } 
+        if (zoom<=14.5 & !zoomflag ) {
+            ecaffich.enableClustering();
+            zoomflag=true;
+            
+
+        }
+
+        
+    })
     function layerClassRemove(className) {
         
         ecolesl.eachLayer(function (layer) {
