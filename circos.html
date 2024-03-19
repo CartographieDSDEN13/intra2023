@@ -23,23 +23,24 @@
     }
     #rec {
         padding-left: 0.5%;
-        padding-top : 5px;
-        display :none;
-        width: 19.5%;
+        padding-top: 5px;
+        display: none;
+        width: 25%;
         height: 100%;
         float: left;
         font-size: 16px;
-      
+
     }
+
     #rec2 {
         padding-left: 0.5%;
-        padding-top : 5px;
-        display :none;
-        width: 19.5%;
+        padding-top: 5px;
+        display: none;
+        width: 25%;
         height: 100%;
         float: left;
         font-size: 16px;
-      
+
     }
 
     #sclose {
@@ -313,7 +314,7 @@
 
 <body>
       <div id ="rec" class="ui-widget">
-        Taper le nom de l'école ou de la commune. <span id="sclose">+</span>
+        Taper le nom de l'école, son code établissement <br>ou un nom de commune.<br><span id="sclose">+</span>
         <label for="tags"></label>
         <input id="tags">
        
@@ -338,7 +339,8 @@
     var tabuaiec=[];
     var tabcircoec=[];
     for (var i=0;i<ecoles.features.length;i++) {
-        tabec.push(ecoles.features[i].properties.nom.substr(4)+' ('+ecoles.features[i].properties.commune+')');
+        tabec.push(ecoles.features[i].properties.nom.substr(4) + ' (' + ecoles.features[i].properties.commune + ')' 
+            +" "+  ecoles.features[i].properties.uai );
         tabuaiec.push(ecoles.features[i].properties.uai);
         tabcircoec.push(ecoles.features[i].properties.circo_uai);
     }
@@ -777,7 +779,7 @@
     }
    annuaire.addTo(map);  
    $(".annuaire").on("click",function () {
-        $("#map").css("width","80%");$("#rec").css("display","inline");map.invalidateSize();
+        $("#map").css("width","74.5%");$("#rec").css("display","inline");map.invalidateSize();
         $('.annuaire').css("display","none")
         $('.annuaire2').css("display","none")
     })
@@ -790,7 +792,7 @@
     }
    annuaire2.addTo(map);  
    $(".annuaire2").on("click",function () {
-        $("#map").css("width","80%");$("#rec2").css("display","inline");map.invalidateSize();
+        $("#map").css("width","74.5%");$("#rec2").css("display","inline");map.invalidateSize();
         $('.annuaire2').css("display","none")
         $('.annuaire').css("display","none")
     })
