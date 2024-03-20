@@ -307,6 +307,20 @@
         font-weight: bold;
         color: rgb(200, 0, 0);
     }
+
+    .ectooltip {
+        filter: drop-shadow(3px 3px 2px rgb(0 0 0 / 0.6));
+        font-size: 14px;
+        font-weight: bold;
+        padding: 2px;
+    }
+
+    .ectooltip2 {
+        filter: drop-shadow(3px 3px 2px rgb(0 0 0 / 0.6));
+        font-size: 12px;
+        font-weight: bold;
+        padding: 0px;
+    }
 </style>
 
 
@@ -359,8 +373,8 @@
         var tabuaiec = [];
         var tabinseeec = [];
         for (var i = 0; i < ecoles.features.length; i++) {
-            tabec.push(ecoles.features[i].properties.nom.substr(4) + ' (' + ecoles.features[i].properties.commune + ')' 
-            +" "+  ecoles.features[i].properties.uai );
+            tabec.push(ecoles.features[i].properties.nom.substr(4) + ' (' + ecoles.features[i].properties.commune + ')'
+                + " " + ecoles.features[i].properties.uai);
             tabuaiec.push(ecoles.features[i].properties.uai);
             tabinseeec.push(ecoles.features[i].properties.insee);
         }
@@ -427,7 +441,7 @@
         // initialisation de la carte
         let map = L.map("map", {
             attributionControl: false,
-            zoomSnap: 0.2
+            zoomSnap: 0.25, zoomDelta: 0.25
         }).setView([43.5, 5], 10); // vue département 13
 
         var OSM = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -437,6 +451,10 @@
 
 
         L.control.scale({ imperial: false, maxWidth: 200, position: 'bottomright' }).addTo(map);
+
+        map.createPane('labels');
+        map.getPane('labels').style.zIndex = 400;
+        map.getPane('labels').style.pointerEvents = 'none';
 
         var secteurColor = d3.scaleLinear()
             .domain([1, 2, 3, 4, 5, 6])
@@ -502,12 +520,14 @@
                 { className: "uaipop" + feature.properties.uai, interactive: true, maxWidth: 700 })
 
 
-            layer.bindTooltip(feature.properties.nom,
+            layer.bindTooltip(layer.feature.properties.nom,
                 {
-                    interactive: true, sticky: false,
-                    permanent: false,
-                    direction: "top", opacity: 1, className: 'ectooltip'
+                    interactive: false, sticky: false,
+                    permanent: false,pane:'labels',
+                    direction: "center", opacity: 1, className: 'ectooltip'
                 })
+
+
             layer.on("mouseover", function (e) {
                 if (otherOpacity) {
                     $(".secteurs").css("opacity", sourd);
@@ -628,7 +648,7 @@
                 setTimeout(function () {
                     ecaffich.unfreeze();
                     layer.fireEvent("mouseover");
-                                 
+
 
                 }, 1000);
 
@@ -717,7 +737,7 @@
                 let etabIcon = L.divIcon({ // icone établissement
                     html: poly(cote, size, couleur, lettre, couleurl, uai),
                     iconSize: [taille_icone, taille_icone],
-                    tooltipAnchor: [0, -10],
+                    tooltipAnchor: [0, 20],
                     className: classe
                 });
 
@@ -780,7 +800,8 @@
         titre.onAdd = function () {
             let div = L.DomUtil.create("div", "titre");
             div.innerHTML =
-                "<h1>Carte des communes</h1>"
+                "<h1>Carte des communes</h1>"+
+                "<h3>Rentrée 2024</h3>"
                 +
                 "<p>Survol des communes pour obtenir une synthèse.\
         <br>Communes en gris : voeu commune impossible</p>"+
@@ -811,7 +832,8 @@
                 poly(3, 24, null, null, null, true) + poly(3, 24, "yellow", null, null, true) + poly(3, 24, "orange", null, null, true) + "<br>Maternelle Hors EP, REP, REP+<br>" +
                 poly(4, 24, null, null, null, true) + poly(4, 24, "yellow", null, null, true) + poly(4, 24, "orange", null, null, true) + "<br>Elémentaire Hors EP, REP, REP+<br>" +
                 poly(5, 24, null, null, null, true) + poly(5, 24, "yellow", null, null, true) + poly(5, 24, "orange", null, null, true) + "<br>Primaire Hors EP, REP, REP+<br>" +
-                `<span class='clust2'>${clusterIcon(3, 1, 1, 1)}</span>` + "Grappe de n écoles <br>Varie en fonction du niveau de zoom";
+                `<span class='clust2'>${clusterIcon(3, 1, 1, 1)}</span>` + "Grappe de n écoles <br>Varie en fonction du niveau de zoom"+
+                "<br><br><b>Cliquer sur une école pour afficher les indformations.</b>";
 
 
             return div;
@@ -980,6 +1002,40 @@
                 ecaffich.enableClustering();
                 zoomflag = true;
 
+
+            }
+
+            if (zoom > 15.5) {
+
+                zoomflag2 = false;
+                ecolesl.eachLayer(function (layer) {
+                    layer.unbindTooltip();
+                    layer.bindTooltip(layer.feature.properties.nom.substring(9),
+                        {
+                            interactive: true, sticky: false,
+                            permanent: true,pane:'labels',
+                            direction: "center", opacity: 1, className: 'ectooltip2'
+                        })
+
+                 
+
+                })
+            }
+            if (zoom <= 15.5) {
+
+                zoomflag2 = true;
+                ecolesl.eachLayer(function (layer) {
+                    layer.unbindTooltip();
+
+                    layer.bindTooltip(layer.feature.properties.nom,
+                        {
+                            interactive: false, sticky: false,
+                            permanent: false,pane:'labels',
+                            direction: "center", opacity: 1, className: 'ectooltip'
+                        })
+
+
+                })
 
             }
 
