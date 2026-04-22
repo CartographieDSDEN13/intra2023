@@ -434,10 +434,11 @@
             zoomSnap: 0.25, zoomDelta: 0.25
         }).setView([43.5, 5], 10); // vue département 13
 
-        var OSM = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+         var OSM = L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
             maxZoom: 18,
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors', opacity: 0.6
         }).addTo(map); // tuiles Open Street Map
+ // tuiles Open Street Map
 
 
         L.control.scale({ imperial: false, maxWidth: 200, position: 'bottomright' }).addTo(map);
@@ -844,7 +845,7 @@
             let div = L.DomUtil.create("div", "titre");
             div.innerHTML =
                 "<h1>Carte des circonscriptions</h1>"+ 
-                "<h3>Rentrée 2025</h3>"
+                "<h3>Rentrée 2026</h3>"
                 +
                 "<p>Survol des circonscriptions pour obtenir une synthèse</p>" +
                 "<p class='einfo'>Ecoles visibles en cliquant sur les circonscriptions</p>"

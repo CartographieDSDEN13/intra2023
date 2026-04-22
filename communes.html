@@ -4,7 +4,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.2/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
@@ -444,7 +443,7 @@
             zoomSnap: 0.25, zoomDelta: 0.25
         }).setView([43.5, 5], 10); // vue département 13
 
-        var OSM = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        var OSM = L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
             maxZoom: 18,
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors', opacity: 0.6
         }).addTo(map); // tuiles Open Street Map
@@ -801,7 +800,7 @@
             let div = L.DomUtil.create("div", "titre");
             div.innerHTML =
                 "<h1>Carte des communes</h1>"+
-                "<h3>Rentrée 2025</h3>"
+                "<h3>Rentrée 2026</h3>"
                 +
                 "<p>Survol des communes pour obtenir une synthèse.\
         <br>Communes en gris : voeu commune impossible</p>"+
